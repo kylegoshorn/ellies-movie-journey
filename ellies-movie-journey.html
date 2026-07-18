@@ -258,6 +258,13 @@ body{font-family:'Nunito',sans-serif;background:var(--cream);color:var(--text);m
 .sync-status.synced{background:rgba(107,170,117,0.35);color:#b0ffbf}
 .sync-status.syncing{background:rgba(245,166,35,0.35);color:#ffe080}
 .sync-status.error{background:rgba(220,50,50,0.35);color:#ffb0b0}
+/* ADMIN PANEL */
+.admin-movie-row{display:flex;align-items:center;gap:10px;padding:12px 14px;border-bottom:1px solid var(--border);flex-wrap:wrap;transition:background 0.15s}
+.admin-movie-row:hover{background:rgba(245,166,35,0.06)}
+.admin-movie-row:nth-child(odd){background:var(--cream)}
+.admin-movie-row:nth-child(even){background:var(--parchment)}
+.admin-movie-row:hover{background:rgba(245,166,35,0.08)!important}
+.custom-badge{background:rgba(155,126,200,0.2);color:var(--purple);padding:2px 8px;border-radius:20px;font-size:10px;font-weight:800;text-transform:uppercase}
 /* PRINT STYLES */
 @media print{
   .app-header,.nav-tabs,.btn-icon,.btn-small,.filter-bar,.header-actions{display:none!important}
@@ -312,6 +319,7 @@ body{font-family:'Nunito',sans-serif;background:var(--cream);color:var(--text);m
     <button class="nav-tab" onclick="switchTab('tvshows',this)">📺 TV Shows</button>
     <button class="nav-tab" onclick="switchTab('timeline',this)">📅 Timeline</button>
     <button class="nav-tab" onclick="switchTab('wishlist',this)">⭐ Wishlist</button>
+    <button class="nav-tab" onclick="switchTab('admin',this)">⚙️ Add Movies</button>
   </div>
 </nav>
 
@@ -420,6 +428,96 @@ body{font-family:'Nunito',sans-serif;background:var(--cream);color:var(--text);m
     </div>
   </div>
 
+  <!-- ============= ADMIN TAB ============= -->
+  <div class="tab-panel" id="tab-admin">
+    <div class="card">
+      <div class="card-title">➕ Add a New Movie</div>
+      <p style="font-size:13px;color:var(--text-light);margin-bottom:18px">Movies you add here will appear across the app — Journey, Collection, Wishlist, Timeline, and Dashboard.</p>
+      <div id="adminForm">
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;margin-bottom:14px">
+          <div class="field-mini" style="min-width:200px;flex:2">
+            <label>🎬 Movie Title *</label>
+            <input type="text" id="a-title" placeholder="e.g. Coco" style="font-size:15px;padding:10px">
+          </div>
+          <div class="field-mini">
+            <label>🎂 Age Group *</label>
+            <select id="a-age" style="padding:10px">
+              <option value="">Select age...</option>
+              <option value="5-6">Age 5–6</option>
+              <option value="6-7">Age 6–7</option>
+              <option value="7-8">Age 7–8</option>
+              <option value="8-9">Age 8–9</option>
+              <option value="9-10">Age 9–10</option>
+            </select>
+          </div>
+          <div class="field-mini">
+            <label>🎭 Icon / Emoji</label>
+            <input type="text" id="a-icon" placeholder="🎬" maxlength="4" style="font-size:22px;padding:8px;text-align:center">
+          </div>
+          <div class="field-mini">
+            <label>📦 Already Owned?</label>
+            <label class="owned-toggle" style="margin-top:10px;font-size:14px">
+              <input type="checkbox" id="a-owned"> Yes, we own it
+            </label>
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;margin-bottom:14px">
+          <div class="field-mini" style="flex:2">
+            <label>🌟 Themes <span style="font-weight:400;text-transform:none">(comma separated)</span></label>
+            <input type="text" id="a-themes" placeholder="e.g. Friendship, Courage, Family">
+          </div>
+          <div class="field-mini" style="flex:2">
+            <label>💡 Life Lesson</label>
+            <input type="text" id="a-lesson" placeholder="e.g. Kindness is always the right choice">
+          </div>
+        </div>
+        <div class="field-mini" style="margin-bottom:14px">
+          <label>❓ Discussion Questions <span style="font-weight:400;text-transform:none">(one per line — aim for 5)</span></label>
+          <textarea id="a-questions" placeholder="What made the main character brave?&#10;How did the friendship change both characters?&#10;What would you have done differently?&#10;What was the most important moment in the movie?&#10;What is one thing you will remember from this film?" style="min-height:120px;width:100%;border:1px solid var(--border);border-radius:8px;padding:10px;font-family:Nunito;font-size:13px;background:var(--card-bg);color:var(--text);resize:vertical"></textarea>
+        </div>
+        <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+          <button class="btn-primary" onclick="saveNewMovie()" style="padding:12px 24px;font-size:15px">✅ Add Movie to Database</button>
+          <button class="btn-secondary" onclick="clearAdminForm()">🗑️ Clear Form</button>
+          <div id="adminMsg" style="font-size:13px;font-weight:700;color:var(--green-dark)"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">🎬 All Movies in Database <span id="movieCountBadge" style="background:var(--amber);color:var(--navy);padding:2px 10px;border-radius:20px;font-size:13px;margin-left:8px"></span></div>
+      <p style="font-size:13px;color:var(--text-light);margin-bottom:14px">Edit or delete any movie. Changes save instantly to the cloud.</p>
+      <div class="filter-bar" style="margin-bottom:14px">
+        <input type="search" class="search-input" placeholder="🔍 Search movies..." id="adminSearch" oninput="renderAdminList()">
+        <select class="filter-select" id="adminAgeFilter" onchange="renderAdminList()">
+          <option value="">All Ages</option>
+          <option value="5-6">Age 5–6</option>
+          <option value="6-7">Age 6–7</option>
+          <option value="7-8">Age 7–8</option>
+          <option value="8-9">Age 8–9</option>
+          <option value="9-10">Age 9–10</option>
+        </select>
+        <select class="filter-select" id="adminSourceFilter" onchange="renderAdminList()">
+          <option value="">All Sources</option>
+          <option value="default">📋 Default List</option>
+          <option value="custom">✨ Added by You</option>
+        </select>
+      </div>
+      <div id="adminMovieList"></div>
+    </div>
+  </div>
+
+</div>
+
+<!-- EDIT MOVIE MODAL -->
+<div class="modal-overlay hidden" id="editMovieModal">
+  <div class="modal" style="max-width:580px">
+    <div class="modal-title">✏️ Edit Movie</div>
+    <div id="editMovieForm"></div>
+    <div class="modal-actions">
+      <button class="btn-secondary" onclick="closeModal('editMovieModal')">Cancel</button>
+      <button class="btn-primary" onclick="saveEditedMovie()">💾 Save Changes</button>
+    </div>
+  </div>
 </div>
 
 <!-- RANDOM PICKER MODAL -->
@@ -531,17 +629,46 @@ async function saveTVRow(id) {
 }
 
 async function loadAllData() {
-  const [watches, collections, journals, tvs] = await Promise.all([
+  const [watches, collections, journals, tvs, dbMovies] = await Promise.all([
     dbGet('watch_data'), dbGet('collection_data'),
-    dbGet('journal_data'), dbGet('tv_data')
+    dbGet('journal_data'), dbGet('tv_data'), dbGet('movies')
   ]);
+
+  // Load user watch / collection / journal / tv data
   watches.forEach(r => { watchData[r.movie_id] = {watched:r.watched, date:r.watch_date, stars:r.stars, character:r.character, scene:r.scene, notes:r.notes}; });
   collections.forEach(r => { collectionData[r.movie_id] = {owned:r.owned, format:r.format, purchaseDate:r.purchase_date, price:r.price, priority:r.priority||'medium', notes:r.notes}; });
   journals.forEach(r => { journalData[r.movie_id] = {date:r.watch_date, childAge:r.child_age, character:r.character, scene:r.scene, stars:r.stars, notes:r.notes, memory:r.memory, photo:r.photo}; });
   tvs.forEach(r => { tvData[r.show_id] = {started:r.started, episodes:r.episodes, favorites:r.favorites, notes:r.notes}; });
-  // Seed default owned movies if not yet in DB
+
+  if (dbMovies.length === 0) {
+    // First run: seed all built-in movies into Supabase
+    console.log('Seeding movies into Supabase...');
+    const chunks = [];
+    for (let i = 0; i < MOVIE_DB.length; i += 10) chunks.push(MOVIE_DB.slice(i, i+10));
+    for (const chunk of chunks) {
+      await dbUpsert('movies', chunk.map((m, idx) => ({
+        id: m.id, title: m.title, age: m.age, owned: m.owned,
+        icon: m.icon, themes: m.themes, questions: m.questions,
+        lessons: m.lessons || [], sort_order: MOVIE_DB.indexOf(m),
+        created_at: new Date().toISOString()
+      })));
+    }
+    // Use the built-in list this first time
+    LIVE_MOVIES = [...MOVIE_DB].map(m => ({...m, _source:'default'}));
+  } else {
+    // Load movies from Supabase (includes any custom ones added later)
+    LIVE_MOVIES = dbMovies
+      .sort((a,b) => (a.sort_order||999) - (b.sort_order||999) || a.title.localeCompare(b.title))
+      .map(m => ({
+        id: m.id, title: m.title, age: m.age, owned: m.owned,
+        icon: m.icon || '🎬', themes: m.themes || [], questions: m.questions || [],
+        lessons: m.lessons || [], _source: MOVIE_DB.find(x=>x.id===m.id) ? 'default' : 'custom'
+      }));
+  }
+
+  // Seed collection defaults for any movie not yet in collection_data
   const seedSaves = [];
-  MOVIE_DB.forEach(m => {
+  LIVE_MOVIES.forEach(m => {
     if (!collectionData[m.id]) {
       collectionData[m.id] = {owned:m.owned, format:'', purchaseDate:'', price:'', priority:'medium', notes:''};
       if (m.owned) seedSaves.push(saveCollectionRow(m.id));
@@ -680,6 +807,9 @@ let journalData = {};
 let appFilter = 'all';
 let currentJournalId = null;
 let tempJournalStars = 0;
+let currentEditId = null;
+// LIVE_MOVIES is the working movie list — starts as MOVIE_DB, replaced with Supabase data after load
+let LIVE_MOVIES = [...MOVIE_DB];
 
 // =====================================================
 // TAB SWITCHING
@@ -699,22 +829,23 @@ function renderTab(name){
   else if(name==='tvshows') renderTVShows();
   else if(name==='timeline') renderTimeline();
   else if(name==='wishlist') renderWishlist();
+  else if(name==='admin') renderAdmin();
 }
 
 // =====================================================
 // DASHBOARD
 // =====================================================
 function renderDashboard(){
-  const total = MOVIE_DB.length;
-  const owned = MOVIE_DB.filter(m=>collectionData[m.id]?.owned).length;
+  const total = LIVE_MOVIES.length;
+  const owned = LIVE_MOVIES.filter(m=>collectionData[m.id]?.owned).length;
   const needed = total - owned;
-  const watched = MOVIE_DB.filter(m=>watchData[m.id]?.watched).length;
+  const watched = LIVE_MOVIES.filter(m=>watchData[m.id]?.watched).length;
   const remaining = total - watched;
   const collPct = Math.round(owned/total*100);
   const viewPct = Math.round(watched/total*100);
 
   // Next recommended
-  const nextMovie = MOVIE_DB.find(m=>!watchData[m.id]?.watched);
+  const nextMovie = LIVE_MOVIES.find(m=>!watchData[m.id]?.watched);
   document.getElementById('nextRecBanner').innerHTML = nextMovie ? `
     <div class="next-rec-card">
       <div class="next-rec-icon">${nextMovie.icon}</div>
@@ -738,7 +869,7 @@ function renderDashboard(){
   const colors = ['','rose','sky','green','purple'];
   
   document.getElementById('viewingProgress').innerHTML = ageGroups.map((ag,i)=>{
-    const movies = MOVIE_DB.filter(m=>m.age===ag);
+    const movies = LIVE_MOVIES.filter(m=>m.age===ag);
     const w = movies.filter(m=>watchData[m.id]?.watched).length;
     const pct = movies.length ? Math.round(w/movies.length*100) : 0;
     return `<div class="progress-item">
@@ -748,7 +879,7 @@ function renderDashboard(){
   }).join('');
 
   document.getElementById('collectionProgress').innerHTML = ageGroups.map((ag,i)=>{
-    const movies = MOVIE_DB.filter(m=>m.age===ag);
+    const movies = LIVE_MOVIES.filter(m=>m.age===ag);
     const o = movies.filter(m=>collectionData[m.id]?.owned).length;
     const pct = movies.length ? Math.round(o/movies.length*100) : 0;
     return `<div class="progress-item">
@@ -758,7 +889,7 @@ function renderDashboard(){
   }).join('');
 
   // Favorites
-  const favs = MOVIE_DB.filter(m=>watchData[m.id]?.stars >= 4).sort((a,b)=>(watchData[b.id]?.stars||0)-(watchData[a.id]?.stars||0)).slice(0,8);
+  const favs = LIVE_MOVIES.filter(m=>watchData[m.id]?.stars >= 4).sort((a,b)=>(watchData[b.id]?.stars||0)-(watchData[a.id]?.stars||0)).slice(0,8);
   document.getElementById('favMovies').innerHTML = favs.length ? favs.map(m=>`
     <div style="display:inline-flex;align-items:center;gap:6px;background:var(--parchment);border:1px solid var(--border);border-radius:20px;padding:5px 12px;margin:4px;font-size:13px;font-weight:700">
       ${m.icon} ${m.title} ${'⭐'.repeat(watchData[m.id]?.stars||0)}
@@ -785,7 +916,7 @@ function renderJourney(){
   
   let html = '';
   ageGroups.forEach(ag=>{
-    let movies = MOVIE_DB.filter(m=>m.age===ag);
+    let movies = LIVE_MOVIES.filter(m=>m.age===ag);
     if(search) movies = movies.filter(m=>m.title.toLowerCase().includes(search));
     if(appFilter==='watched') movies = movies.filter(m=>watchData[m.id]?.watched);
     if(appFilter==='unwatched') movies = movies.filter(m=>!watchData[m.id]?.watched);
@@ -864,7 +995,7 @@ async function toggleWatched(id, checked){
   await saveWatchRow(id);
   renderJourney();
   renderDashboard();
-  showToast(checked ? `✅ "${MOVIE_DB.find(m=>m.id===id)?.title}" watched!` : `↩️ Unmarked as watched`);
+  showToast(checked ? `✅ "${LIVE_MOVIES.find(m=>m.id===id)?.title}" watched!` : `↩️ Unmarked as watched`);
 }
 
 async function setStars(id, n){
@@ -890,7 +1021,7 @@ function toggleDiscussion(id){
 // =====================================================
 function openJournal(id){
   currentJournalId = id;
-  const movie = MOVIE_DB.find(m=>m.id===id);
+  const movie = LIVE_MOVIES.find(m=>m.id===id);
   const j = journalData[id]||{};
   tempJournalStars = j.stars||0;
   document.getElementById('journalMovieTitle').textContent = `📔 ${movie.title} — Family Memory`;
@@ -963,8 +1094,8 @@ async function saveJournal(){
 // COLLECTION TRACKER
 // =====================================================
 function renderCollection(){
-  const total = MOVIE_DB.length;
-  const owned = MOVIE_DB.filter(m=>collectionData[m.id]?.owned).length;
+  const total = LIVE_MOVIES.length;
+  const owned = LIVE_MOVIES.filter(m=>collectionData[m.id]?.owned).length;
   const needed = total - owned;
   const ageGroups = ['5-6','6-7','7-8','8-9','9-10'];
   
@@ -973,19 +1104,19 @@ function renderCollection(){
     <div class="stat-card rose"><div class="stat-num">${needed}</div><div class="stat-label">🛒 Needed</div></div>
     <div class="stat-card amber"><div class="stat-num">${Math.round(owned/total*100)}%</div><div class="stat-label">✅ Complete</div></div>
     ${ageGroups.map(ag=>{
-      const m = MOVIE_DB.filter(x=>x.age===ag);
+      const m = LIVE_MOVIES.filter(x=>x.age===ag);
       const o = m.filter(x=>collectionData[x.id]?.owned).length;
       return `<div class="stat-card sky"><div class="stat-num" style="font-size:22px">${o}/${m.length}</div><div class="stat-label">Age ${ag}</div></div>`;
     }).join('')}`;
 
   // Owned list
-  const ownedMovies = MOVIE_DB.filter(m=>collectionData[m.id]?.owned);
+  const ownedMovies = LIVE_MOVIES.filter(m=>collectionData[m.id]?.owned);
   document.getElementById('ownedList').innerHTML = ownedMovies.length ? collectionTableHTML(ownedMovies,true) : '<div class="empty-state"><div class="empty-state-icon">📦</div><p>No movies owned yet. Mark movies as owned below.</p></div>';
 
   // Wishlist
   const ageF = document.getElementById('wishlistAgeFilter')?.value||'';
   const priF = document.getElementById('priorityFilter')?.value||'';
-  let wishlist = MOVIE_DB.filter(m=>!collectionData[m.id]?.owned);
+  let wishlist = LIVE_MOVIES.filter(m=>!collectionData[m.id]?.owned);
   if(ageF) wishlist = wishlist.filter(m=>m.age===ageF);
   if(priF) wishlist = wishlist.filter(m=>(collectionData[m.id]?.priority||'medium')===priF);
   document.getElementById('wishlistList').innerHTML = wishlist.length ? collectionTableHTML(wishlist,false) : '<div class="empty-state"><div class="empty-state-icon">🎉</div><p>All movies owned!</p></div>';
@@ -1095,7 +1226,7 @@ async function setTVField(id, field, val){
 // TIMELINE
 // =====================================================
 function renderTimeline(){
-  const watched = MOVIE_DB.filter(m=>watchData[m.id]?.watched && watchData[m.id]?.date)
+  const watched = LIVE_MOVIES.filter(m=>watchData[m.id]?.watched && watchData[m.id]?.date)
     .sort((a,b)=>new Date(watchData[a.id].date)-new Date(watchData[b.id].date));
   
   if(!watched.length){
@@ -1126,7 +1257,7 @@ function renderTimeline(){
 // WISHLIST
 // =====================================================
 function renderWishlist(){
-  const wishlist = MOVIE_DB.filter(m=>!collectionData[m.id]?.owned);
+  const wishlist = LIVE_MOVIES.filter(m=>!collectionData[m.id]?.owned);
   const priorities = ['high','medium','low'];
   const priorityLabels = {high:'🔴 High Priority',medium:'🟡 Medium Priority',low:'🟢 Low Priority'};
   
@@ -1159,7 +1290,7 @@ function renderWishlist(){
   document.getElementById('printChecklist').innerHTML = ageGroups.map(ag=>`
     <div style="margin-bottom:16px">
       <div style="font-family:Playfair Display,serif;font-weight:700;margin-bottom:6px;font-size:15px">Age ${ag}</div>
-      ${MOVIE_DB.filter(m=>m.age===ag).map(m=>`
+      ${LIVE_MOVIES.filter(m=>m.age===ag).map(m=>`
         <div style="display:flex;align-items:center;gap:8px;padding:4px 0;border-bottom:1px solid var(--border);font-size:13px">
           <span>${collectionData[m.id]?.owned?'☑':'☐'}</span>
           <span style="font-weight:700">${m.title}</span>
@@ -1172,7 +1303,7 @@ function renderWishlist(){
 // RANDOM PICKER
 // =====================================================
 function openRandomPicker(){
-  const unwatched = MOVIE_DB.filter(m=>!watchData[m.id]?.watched);
+  const unwatched = LIVE_MOVIES.filter(m=>!watchData[m.id]?.watched);
   if(!unwatched.length){
     showToast('🎉 All movies watched!');
     return;
@@ -1249,6 +1380,199 @@ async function importData(e){
     }catch(err){showToast('❌ Import failed — invalid file');}
   };
   reader.readAsText(file);
+}
+
+// =====================================================
+// ADMIN PANEL
+// =====================================================
+function renderAdmin() {
+  renderAdminList();
+  const badge = document.getElementById('movieCountBadge');
+  if (badge) badge.textContent = LIVE_MOVIES.length;
+}
+
+function renderAdminList() {
+  const search = (document.getElementById('adminSearch')?.value || '').toLowerCase();
+  const ageF = document.getElementById('adminAgeFilter')?.value || '';
+  const srcF = document.getElementById('adminSourceFilter')?.value || '';
+  const badge = document.getElementById('movieCountBadge');
+  if (badge) badge.textContent = LIVE_MOVIES.length;
+
+  let movies = [...LIVE_MOVIES];
+  if (search) movies = movies.filter(m => m.title.toLowerCase().includes(search));
+  if (ageF) movies = movies.filter(m => m.age === ageF);
+  if (srcF) movies = movies.filter(m => (m._source || 'default') === srcF);
+
+  const list = document.getElementById('adminMovieList');
+  if (!list) return;
+  if (!movies.length) {
+    list.innerHTML = '<div class="empty-state"><div class="empty-state-icon">🔍</div><p>No movies match your filters.</p></div>';
+    return;
+  }
+
+  list.innerHTML = movies.map(m => `
+    <div class="admin-movie-row">
+      <span style="font-size:20px">${m.icon}</span>
+      <div style="flex:1;min-width:140px">
+        <div style="font-weight:700;font-size:14px">${m.title}
+          ${m._source === 'custom' ? '<span class="custom-badge">✨ Custom</span>' : ''}
+        </div>
+        <div style="font-size:12px;color:var(--text-light)">Age ${m.age} • ${m.themes.slice(0,3).join(', ')}</div>
+      </div>
+      <div style="font-size:12px;color:var(--text-light);flex:1;min-width:120px">${m.questions.length} questions</div>
+      <button class="btn-small" onclick="openEditMovie('${m.id}')">✏️ Edit</button>
+      ${m._source === 'custom' ? `<button class="btn-small danger" onclick="deleteMovie('${m.id}','${m.title.replace(/'/g,"\\'")}')">🗑️ Delete</button>` : ''}
+    </div>`).join('');
+}
+
+function clearAdminForm() {
+  ['a-title','a-icon','a-themes','a-lesson','a-questions'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.value = '';
+  });
+  const age = document.getElementById('a-age');
+  if (age) age.value = '';
+  const owned = document.getElementById('a-owned');
+  if (owned) owned.checked = false;
+  const msg = document.getElementById('adminMsg');
+  if (msg) msg.textContent = '';
+}
+
+async function saveNewMovie() {
+  const title = document.getElementById('a-title')?.value?.trim();
+  const age = document.getElementById('a-age')?.value;
+  if (!title) { showAdminMsg('❌ Please enter a movie title', 'error'); return; }
+  if (!age) { showAdminMsg('❌ Please select an age group', 'error'); return; }
+
+  const icon = document.getElementById('a-icon')?.value?.trim() || '🎬';
+  const owned = document.getElementById('a-owned')?.checked || false;
+  const themes = (document.getElementById('a-themes')?.value || '').split(',').map(t => t.trim()).filter(Boolean);
+  const lesson = document.getElementById('a-lesson')?.value?.trim();
+  const questions = (document.getElementById('a-questions')?.value || '').split('\n').map(q => q.trim()).filter(Boolean);
+  const lessons = lesson ? [lesson] : [];
+
+  // Generate a clean id from the title
+  const id = 'custom-' + title.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'') + '-' + Date.now();
+
+  const newMovie = { id, title, age, owned, icon, themes, questions, lessons, _source: 'custom' };
+
+  // Save to Supabase movies table
+  setSyncStatus('syncing');
+  await dbUpsert('movies', {
+    id, title, age, owned, icon, themes, questions, lessons,
+    sort_order: 999, created_at: new Date().toISOString()
+  });
+
+  // Add to live list
+  LIVE_MOVIES.push(newMovie);
+
+  // Seed collection entry
+  collectionData[id] = { owned, format:'', purchaseDate:'', price:'', priority:'medium', notes:'' };
+  if (owned) await saveCollectionRow(id);
+
+  showAdminMsg(`✅ "${title}" added!`, 'success');
+  clearAdminForm();
+  renderAdminList();
+  renderDashboard();
+  showToast(`🎬 "${title}" added to the database!`);
+}
+
+function showAdminMsg(msg, type) {
+  const el = document.getElementById('adminMsg');
+  if (!el) return;
+  el.textContent = msg;
+  el.style.color = type === 'error' ? 'var(--rose-dark)' : 'var(--green-dark)';
+  setTimeout(() => { el.textContent = ''; }, 4000);
+}
+
+function openEditMovie(id) {
+  currentEditId = id;
+  const m = LIVE_MOVIES.find(x => x.id === id);
+  if (!m) return;
+  document.getElementById('editMovieForm').innerHTML = `
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">
+      <div class="field-mini" style="grid-column:span 2">
+        <label>🎬 Title</label>
+        <input type="text" id="em-title" value="${m.title}" style="font-size:15px;padding:10px;width:100%;border:1px solid var(--border);border-radius:8px;background:var(--card-bg);color:var(--text);font-family:Nunito">
+      </div>
+      <div class="field-mini">
+        <label>🎂 Age Group</label>
+        <select id="em-age" style="width:100%;border:1px solid var(--border);border-radius:8px;padding:10px;background:var(--card-bg);color:var(--text);font-family:Nunito">
+          <option value="5-6" ${m.age==='5-6'?'selected':''}>Age 5–6</option>
+          <option value="6-7" ${m.age==='6-7'?'selected':''}>Age 6–7</option>
+          <option value="7-8" ${m.age==='7-8'?'selected':''}>Age 7–8</option>
+          <option value="8-9" ${m.age==='8-9'?'selected':''}>Age 8–9</option>
+          <option value="9-10" ${m.age==='9-10'?'selected':''}>Age 9–10</option>
+        </select>
+      </div>
+      <div class="field-mini">
+        <label>🎭 Icon</label>
+        <input type="text" id="em-icon" value="${m.icon}" maxlength="4" style="font-size:22px;text-align:center;width:100%;border:1px solid var(--border);border-radius:8px;padding:8px;background:var(--card-bg);color:var(--text);font-family:Nunito">
+      </div>
+    </div>
+    <div class="field-mini" style="margin-bottom:12px">
+      <label>🌟 Themes (comma separated)</label>
+      <input type="text" id="em-themes" value="${m.themes.join(', ')}" style="width:100%;border:1px solid var(--border);border-radius:8px;padding:9px;background:var(--card-bg);color:var(--text);font-family:Nunito;font-size:13px">
+    </div>
+    <div class="field-mini" style="margin-bottom:12px">
+      <label>💡 Life Lesson</label>
+      <input type="text" id="em-lesson" value="${(m.lessons||[])[0]||''}" style="width:100%;border:1px solid var(--border);border-radius:8px;padding:9px;background:var(--card-bg);color:var(--text);font-family:Nunito;font-size:13px">
+    </div>
+    <div class="field-mini">
+      <label>❓ Discussion Questions (one per line)</label>
+      <textarea id="em-questions" style="width:100%;border:1px solid var(--border);border-radius:8px;padding:9px;background:var(--card-bg);color:var(--text);font-family:Nunito;font-size:13px;min-height:130px;resize:vertical">${(m.questions||[]).join('\n')}</textarea>
+    </div>`;
+  document.getElementById('editMovieModal').classList.remove('hidden');
+}
+
+async function saveEditedMovie() {
+  if (!currentEditId) return;
+  const idx = LIVE_MOVIES.findIndex(x => x.id === currentEditId);
+  if (idx === -1) return;
+
+  const title = document.getElementById('em-title')?.value?.trim();
+  const age = document.getElementById('em-age')?.value;
+  const icon = document.getElementById('em-icon')?.value?.trim() || '🎬';
+  const themes = (document.getElementById('em-themes')?.value || '').split(',').map(t => t.trim()).filter(Boolean);
+  const lesson = document.getElementById('em-lesson')?.value?.trim();
+  const questions = (document.getElementById('em-questions')?.value || '').split('\n').map(q => q.trim()).filter(Boolean);
+  const lessons = lesson ? [lesson] : [];
+
+  // Update in Supabase
+  await dbUpsert('movies', {
+    id: currentEditId, title, age, icon, themes, questions, lessons,
+    owned: LIVE_MOVIES[idx].owned, sort_order: LIVE_MOVIES[idx].sort_order || 999,
+    updated_at: new Date().toISOString()
+  });
+
+  // Update local
+  LIVE_MOVIES[idx] = { ...LIVE_MOVIES[idx], title, age, icon, themes, questions, lessons };
+
+  closeModal('editMovieModal');
+  renderAdminList();
+  renderDashboard();
+  showToast(`✅ "${title}" updated!`);
+}
+
+async function deleteMovie(id, title) {
+  if (!confirm(`Delete "${title}"? This will remove it from the database. Watch history and journal entries will be kept.`)) return;
+
+  // Delete from Supabase
+  try {
+    setSyncStatus('syncing');
+    const r = await fetch(`${SUPABASE_URL}/rest/v1/movies?id=eq.${id}`, {
+      method: 'DELETE',
+      headers: { ...DB_HEADERS, 'Prefer': 'return=minimal' }
+    });
+    if (!r.ok) throw new Error(await r.text());
+    setSyncStatus('synced');
+  } catch(e) { setSyncStatus('error'); showToast('❌ Delete failed'); return; }
+
+  // Remove from local list
+  LIVE_MOVIES = LIVE_MOVIES.filter(m => m.id !== id);
+  renderAdminList();
+  renderDashboard();
+  showToast(`🗑️ "${title}" removed`);
 }
 
 // Close modals on overlay click
