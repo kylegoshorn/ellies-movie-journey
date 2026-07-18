@@ -201,7 +201,7 @@ body{font-family:'Nunito',sans-serif;background:var(--cream);color:var(--text);m
 .film-hole.amber{background:var(--amber);opacity:0.5}
 
 /* AGE GROUP */
-.age-group-header{background:linear-gradient(135deg,var(--navy),var(--navy-light));color:#fff;padding:14px 18px;border-radius:12px;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;cursor:pointer}
+.age-group-header{background:linear-gradient(135deg,#0d1a3a,#1a2a5a);color:#fff;padding:14px 18px;border-radius:12px;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;cursor:pointer;border:2px solid rgba(245,166,35,0.4);box-shadow:0 0 15px rgba(245,166,35,0.1)}
 .age-badge{background:var(--amber);color:var(--navy);padding:4px 12px;border-radius:20px;font-weight:900;font-size:13px}
 .age-themes{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
 .theme-chip{background:rgba(255,255,255,0.2);color:#fff;padding:2px 10px;border-radius:20px;font-size:11px;font-weight:700}
@@ -890,11 +890,19 @@ async function loadAllData() {
   } else {
     // Load movies from Supabase (includes any custom ones added later)
     LIVE_MOVIES = dbMovies
-      .sort((a,b) => (a.sort_order||999) - (b.sort_order||999) || a.title.localeCompare(b.title))
+      .sort((a,b) => {
+        // First sort by age group order
+        const ageOrder = {'5-6':0,'6-7':1,'7-8':2,'8-9':3,'9-10':4};
+        const ageDiff = (ageOrder[a.age]||9) - (ageOrder[b.age]||9);
+        if (ageDiff !== 0) return ageDiff;
+        // Then by sort_order within age group
+        return (a.sort_order||999) - (b.sort_order||999);
+      })
       .map(m => ({
         id: m.id, title: m.title, age: m.age, owned: m.owned,
         icon: m.icon || '🎬', themes: m.themes || [], questions: m.questions || [],
-        lessons: m.lessons || [], _source: MOVIE_DB.find(x=>x.id===m.id) ? 'default' : 'custom'
+        lessons: m.lessons || [], sort_order: m.sort_order || 999,
+        _source: MOVIE_DB.find(x=>x.id===m.id) ? 'default' : 'custom'
       }));
   }
 
@@ -1217,7 +1225,8 @@ function renderJourney(){
   
   let html = '';
   ageGroups.forEach(ag=>{
-    let movies = LIVE_MOVIES.filter(m=>m.age===ag);
+    let movies = LIVE_MOVIES.filter(m=>m.age===ag)
+      .sort((a,b)=>(a.sort_order||999)-(b.sort_order||999));
     if(search) movies = movies.filter(m=>m.title.toLowerCase().includes(search));
     if(appFilter==='watched') movies = movies.filter(m=>watchData[m.id]?.watched);
     if(appFilter==='unwatched') movies = movies.filter(m=>!watchData[m.id]?.watched);
