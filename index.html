@@ -7,43 +7,26 @@
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Nunito:wght@400;600;700;800&family=Press+Start+2P&display=swap" rel="stylesheet">
 <style>
 :root {
-  --cream: #FFF8E7;
-  --parchment: #F0E6C8;
+  --cream: #12110e;
+  --parchment: #1c1a14;
   --amber: #F5A623;
   --amber-dark: #D4891A;
-  --rose: #E8A0A0;
-  --rose-dark: #C97070;
-  --sky: #7BB8D4;
-  --sky-dark: #5A9CBF;
-  --navy: #2C3E6B;
-  --navy-light: #3D5490;
-  --green: #6BAA75;
-  --green-dark: #4E8A59;
-  --purple: #9B7EC8;
-  --text: #2C2416;
-  --text-light: #6B5A3E;
-  --border: #D4C4A0;
-  --shadow: rgba(44,36,22,0.12);
-  --card-bg: #FFFDF5;
-  --stripe-odd: #FFF8E7;
-  --stripe-even: #FFF3D0;
-}
-[data-theme="dark"] {
-  --cream: #1A1610;
-  --parchment: #252018;
-  --amber: #F5A623;
   --rose: #C97070;
+  --rose-dark: #a85050;
   --sky: #5A9CBF;
+  --sky-dark: #3d7fa0;
   --navy: #7B9BDB;
   --navy-light: #9BB5F0;
   --green: #6BAA75;
+  --green-dark: #4E8A59;
+  --purple: #9B7EC8;
   --text: #F0E6C8;
   --text-light: #C4B48A;
   --border: #3D3020;
-  --shadow: rgba(0,0,0,0.4);
-  --card-bg: #201C14;
-  --stripe-odd: #1A1610;
-  --stripe-even: #201C14;
+  --shadow: rgba(0,0,0,0.5);
+  --card-bg: #1e1a12;
+  --stripe-odd: #12110e;
+  --stripe-even: #1c1a14;
 }
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'Nunito',sans-serif;background:var(--cream);color:var(--text);min-height:100vh;transition:background 0.3s,color 0.3s}
@@ -185,7 +168,7 @@ body{font-family:'Nunito',sans-serif;background:var(--cream);color:var(--text);m
 /* CARDS */
 .card{background:var(--card-bg);border:1px solid var(--border);border-radius:14px;padding:20px;box-shadow:0 2px 12px var(--shadow);margin-bottom:20px}
 .card-title{font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:var(--navy);margin-bottom:14px;display:flex;align-items:center;gap:8px}
-[data-theme="dark"] .card-title{color:var(--navy-light)}
+.card-title{color:var(--navy)}
 
 /* DASHBOARD */
 .dashboard-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:14px;margin-bottom:20px}
@@ -198,7 +181,7 @@ body{font-family:'Nunito',sans-serif;background:var(--cream);color:var(--text);m
 .stat-card.sky .stat-num{color:var(--sky-dark)}
 .stat-card.green .stat-num{color:var(--green-dark)}
 .stat-card.navy .stat-num{color:var(--navy)}
-[data-theme="dark"] .stat-card.navy .stat-num{color:var(--navy-light)}
+.stat-card.navy .stat-num{color:var(--navy)}
 .stat-card.purple .stat-num{color:var(--purple)}
 
 /* PROGRESS BARS */
@@ -317,7 +300,7 @@ body{font-family:'Nunito',sans-serif;background:var(--cream);color:var(--text);m
 .modal-overlay.hidden{display:none}
 .modal{background:var(--card-bg);border-radius:16px;padding:24px;max-width:500px;width:100%;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,0.3)}
 .modal-title{font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:var(--navy);margin-bottom:16px}
-[data-theme="dark"] .modal-title{color:var(--navy-light)}
+.modal-title{color:var(--navy)}
 .modal-actions{display:flex;gap:10px;margin-top:16px;justify-content:flex-end}
 .btn-primary{background:var(--navy);color:#fff;border:none;padding:10px 20px;border-radius:10px;cursor:pointer;font-family:'Nunito',sans-serif;font-weight:700;font-size:14px;transition:all 0.2s}
 .btn-primary:hover{background:var(--navy-light)}
@@ -325,7 +308,10 @@ body{font-family:'Nunito',sans-serif;background:var(--cream);color:var(--text);m
 .btn-secondary:hover{background:var(--border)}
 
 /* NEXT REC */
-.next-rec-card{background:linear-gradient(135deg,var(--navy),var(--navy-light));color:#fff;border-radius:14px;padding:18px;margin-bottom:20px;display:flex;align-items:center;gap:14px}
+.next-rec-card{background:linear-gradient(135deg,#1a2a5a,#2a3a7a);color:#fff;border-radius:14px;padding:18px;margin-bottom:20px;display:flex;align-items:center;gap:14px;border:2px solid var(--amber);box-shadow:0 0 24px rgba(245,166,35,0.25)}
+.next-rec-label{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;color:rgba(255,255,255,0.8);margin-bottom:2px}
+.next-rec-title{font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:var(--amber)}
+.next-rec-age{font-size:12px;color:rgba(255,255,255,0.85);margin-top:2px}
 .next-rec-icon{font-size:36px}
 .next-rec-label{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;opacity:0.7;margin-bottom:2px}
 .next-rec-title{font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:var(--amber)}
@@ -333,7 +319,7 @@ body{font-family:'Nunito',sans-serif;background:var(--cream);color:var(--text);m
 
 /* RANDOM PICKER */
 .picker-result{text-align:center;padding:20px;font-family:'Playfair Display',serif;font-size:24px;font-weight:700;color:var(--navy);animation:pop 0.3s ease}
-[data-theme="dark"] .picker-result{color:var(--navy-light)}
+.picker-result{color:var(--navy)}
 @keyframes pop{from{transform:scale(0.8);opacity:0}to{transform:scale(1);opacity:1}}
 
 /* WISHLIST */
@@ -352,7 +338,7 @@ body{font-family:'Nunito',sans-serif;background:var(--cream);color:var(--text);m
 
 /* SECTION TOGGLE */
 .section-toggle{width:100%;background:none;border:none;cursor:pointer;font-family:'Playfair Display',serif;font-size:16px;font-weight:700;color:var(--navy);text-align:left;padding:12px 0;display:flex;align-items:center;justify-content:space-between}
-[data-theme="dark"] .section-toggle{color:var(--navy-light)}
+.section-toggle{color:var(--navy)}
 .section-toggle:after{content:'▾';transition:transform 0.2s}
 .section-toggle.collapsed:after{transform:rotate(-90deg)}
 
@@ -418,7 +404,6 @@ body{font-family:'Nunito',sans-serif;background:var(--cream);color:var(--text);m
     <div class="sync-status" id="syncStatus">CONNECTING...</div>
     <div class="header-actions">
       <button class="btn-icon" onclick="openRandomPicker()">🎲 PICK</button>
-      <button class="btn-icon" onclick="toggleDarkMode()" id="darkBtn">🌙 MODE</button>
       <button class="btn-icon" onclick="exportData()">📤 SAVE</button>
       <input type="file" id="importFile" accept=".json" style="display:none" onchange="importData(event)">
     </div>
@@ -1443,13 +1428,6 @@ function closeModal(id){
   document.getElementById(id).classList.add('hidden');
 }
 
-function toggleDarkMode(){
-  const isDark = document.documentElement.getAttribute('data-theme')==='dark';
-  document.documentElement.setAttribute('data-theme', isDark ? '' : 'dark');
-  localStorage.setItem('ellie_theme', isDark ? '' : 'dark');
-  event.target.textContent = isDark ? '🌙 Dark Mode' : '☀️ Light Mode';
-}
-
 function showToast(msg){
   const t = document.getElementById('toast');
   t.textContent = msg;
@@ -1695,9 +1673,6 @@ document.querySelectorAll('.modal-overlay').forEach(o=>{
   o.addEventListener('click', e=>{ if(e.target===o) o.classList.add('hidden'); });
 });
 
-// Restore dark mode preference
-const savedTheme = localStorage.getItem('ellie_theme');
-if(savedTheme) document.documentElement.setAttribute('data-theme', savedTheme);
 
 // BOOT — load from Supabase then render
 (async()=>{
