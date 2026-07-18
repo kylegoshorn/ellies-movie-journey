@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Ellie's Movie Journey 🎬</title>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Nunito:wght@400;600;700;800&family=Press+Start+2P&display=swap" rel="stylesheet">
 <style>
 :root {
   --cream: #FFF8E7;
@@ -48,21 +48,134 @@
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'Nunito',sans-serif;background:var(--cream);color:var(--text);min-height:100vh;transition:background 0.3s,color 0.3s}
 
-/* HEADER */
-.app-header{background:linear-gradient(135deg,var(--navy) 0%,var(--navy-light) 100%);padding:16px 20px;position:sticky;top:0;z-index:100;box-shadow:0 4px 20px rgba(0,0,0,0.3)}
-.header-inner{max-width:1200px;margin:0 auto;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
-.app-title{font-family:'Playfair Display',serif;font-size:clamp(18px,4vw,28px);color:var(--amber);font-weight:900;flex:1;min-width:200px}
-.app-title span{color:#fff;font-weight:400}
-.header-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
-.btn-icon{background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.25);color:#fff;padding:7px 12px;border-radius:8px;cursor:pointer;font-size:13px;font-family:'Nunito',sans-serif;font-weight:700;transition:all 0.2s;white-space:nowrap}
-.btn-icon:hover{background:rgba(255,255,255,0.25)}
+/* HEADER — VINTAGE ARCADE */
+.app-header{
+  background:#0a0a1a;
+  padding:0;
+  position:sticky;
+  top:0;
+  z-index:100;
+  border-bottom:4px solid #F5A623;
+  box-shadow:0 0 30px rgba(245,166,35,0.4), 0 0 60px rgba(245,166,35,0.15);
+  image-rendering:pixelated;
+}
+.header-inner{
+  max-width:1200px;margin:0 auto;
+  display:flex;align-items:center;gap:12px;flex-wrap:wrap;
+  padding:14px 20px;
+}
+/* Scanline overlay effect */
+.app-header::after{
+  content:'';pointer-events:none;
+  position:absolute;inset:0;
+  background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.08) 2px,rgba(0,0,0,0.08) 4px);
+  z-index:1;
+}
+.header-inner{position:relative;z-index:2}
 
-/* NAV TABS */
-.nav-tabs{background:var(--navy);border-bottom:3px solid var(--amber);overflow-x:auto;-webkit-overflow-scrolling:touch}
+/* Pixel title */
+.app-title{
+  font-family:'Press Start 2P',monospace;
+  font-size:clamp(10px,2.5vw,16px);
+  color:#F5A623;
+  flex:1;min-width:180px;
+  text-shadow:0 0 10px rgba(245,166,35,0.8), 3px 3px 0 #8B5500;
+  letter-spacing:1px;
+  line-height:1.6;
+}
+.app-title span{
+  color:#fff;
+  text-shadow:0 0 10px rgba(255,255,255,0.6), 3px 3px 0 #333;
+}
+.app-title .pixel-sub{
+  display:block;
+  font-size:0.55em;
+  color:#7B9BDB;
+  text-shadow:0 0 8px rgba(123,155,219,0.8), 2px 2px 0 #1a2a5a;
+  margin-top:4px;
+  letter-spacing:2px;
+}
+
+/* Pixel buttons */
+.btn-icon{
+  background:#1a0a3a;
+  border:3px solid #F5A623;
+  color:#F5A623;
+  padding:7px 12px;
+  border-radius:0;
+  cursor:pointer;
+  font-size:11px;
+  font-family:'Press Start 2P',monospace;
+  font-weight:400;
+  transition:all 0.1s;
+  white-space:nowrap;
+  text-shadow:0 0 6px rgba(245,166,35,0.6);
+  box-shadow:3px 3px 0 #8B5500, inset 0 0 10px rgba(245,166,35,0.05);
+  image-rendering:pixelated;
+}
+.btn-icon:hover{
+  background:#F5A623;
+  color:#0a0a1a;
+  box-shadow:3px 3px 0 #8B5500, 0 0 20px rgba(245,166,35,0.5);
+  transform:translate(-1px,-1px);
+  text-shadow:none;
+}
+.btn-icon:active{
+  transform:translate(2px,2px);
+  box-shadow:1px 1px 0 #8B5500;
+}
+
+/* Sync status */
+.sync-status{
+  font-family:'Press Start 2P',monospace;
+  font-size:8px;
+  padding:6px 10px;
+  border-radius:0;
+  border:2px solid rgba(255,255,255,0.2);
+  background:rgba(0,0,0,0.4);
+  color:rgba(255,255,255,0.6);
+  white-space:nowrap;
+  letter-spacing:1px;
+}
+.sync-status.synced{border-color:#6BAA75;color:#6BAA75;text-shadow:0 0 8px rgba(107,170,117,0.8)}
+.sync-status.syncing{border-color:#F5A623;color:#F5A623;text-shadow:0 0 8px rgba(245,166,35,0.8)}
+.sync-status.error{border-color:#E87070;color:#E87070;text-shadow:0 0 8px rgba(232,112,112,0.8)}
+
+/* NAV TABS — pixel style */
+.nav-tabs{
+  background:#0d0d20;
+  border-bottom:3px solid #F5A623;
+  overflow-x:auto;
+  -webkit-overflow-scrolling:touch;
+  box-shadow:0 3px 15px rgba(245,166,35,0.2);
+}
 .nav-tabs-inner{max-width:1200px;margin:0 auto;display:flex}
-.nav-tab{padding:12px 20px;color:rgba(255,255,255,0.7);cursor:pointer;font-family:'Nunito',sans-serif;font-weight:700;font-size:14px;white-space:nowrap;border-bottom:3px solid transparent;margin-bottom:-3px;transition:all 0.2s}
-.nav-tab:hover{color:#fff;background:rgba(255,255,255,0.08)}
-.nav-tab.active{color:var(--amber);border-bottom-color:var(--amber);background:rgba(245,166,35,0.1)}
+.nav-tab{
+  padding:12px 16px;
+  color:rgba(245,166,35,0.5);
+  cursor:pointer;
+  font-family:'Press Start 2P',monospace;
+  font-size:8px;
+  white-space:nowrap;
+  border-bottom:3px solid transparent;
+  margin-bottom:-3px;
+  transition:all 0.15s;
+  background:none;
+  border-top:none;border-left:none;border-right:none;
+  letter-spacing:0.5px;
+  line-height:1.8;
+}
+.nav-tab:hover{
+  color:#F5A623;
+  background:rgba(245,166,35,0.08);
+  text-shadow:0 0 8px rgba(245,166,35,0.6);
+}
+.nav-tab.active{
+  color:#F5A623;
+  border-bottom-color:#F5A623;
+  background:rgba(245,166,35,0.12);
+  text-shadow:0 0 12px rgba(245,166,35,0.9);
+}
 
 /* MAIN CONTENT */
 .main-content{max-width:1200px;margin:0 auto;padding:20px 16px 40px}
@@ -249,9 +362,9 @@ body{font-family:'Nunito',sans-serif;background:var(--cream);color:var(--text);m
 .photo-preview img{width:100%;height:100%;object-fit:cover}
 
 /* LOADING */
-.loading-overlay{position:fixed;inset:0;background:rgba(44,62,107,0.92);z-index:3000;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px}
+.loading-overlay{position:fixed;inset:0;background:#0a0a1a;z-index:3000;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px}
 .loading-overlay.hidden{display:none}
-.spinner{width:48px;height:48px;border:4px solid rgba(255,255,255,0.2);border-top-color:var(--amber);border-radius:50%;animation:spin 0.8s linear infinite}
+.spinner{width:48px;height:48px;border:4px solid rgba(245,166,35,0.2);border-top-color:#F5A623;border-radius:0;animation:spin 0.6s linear infinite;box-shadow:0 0 20px rgba(245,166,35,0.4)}
 @keyframes spin{to{transform:rotate(360deg)}}
 /* SYNC STATUS */
 .sync-status{font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px;background:rgba(255,255,255,0.15);color:#fff;white-space:nowrap}
@@ -291,20 +404,22 @@ body{font-family:'Nunito',sans-serif;background:var(--cream);color:var(--text);m
 <!-- LOADING OVERLAY -->
 <div class="loading-overlay" id="loadingOverlay">
   <div class="spinner"></div>
-  <div style="font-family:'Playfair Display',serif;font-size:20px;font-weight:700;color:#fff">Loading Ellie's Journey...</div>
-  <div style="font-size:13px;color:rgba(255,255,255,0.7)">Connecting to cloud ☁️</div>
+  <div style="font-family:'Press Start 2P',monospace;font-size:14px;color:#F5A623;text-shadow:0 0 20px rgba(245,166,35,0.8);text-align:center;line-height:2">LOADING ELLIE'S<br>MOVIE JOURNEY</div>
+  <div style="font-family:'Press Start 2P',monospace;font-size:9px;color:rgba(255,255,255,0.5);letter-spacing:2px;margin-top:8px">CONNECTING TO CLOUD...</div>
 </div>
 
 <!-- HEADER -->
 <header class="app-header">
   <div class="header-inner">
-    <div class="app-title">🎬 Ellie's <span>Movie Journey</span></div>
-    <div class="sync-status" id="syncStatus">⏳ Connecting...</div>
+    <div class="app-title">
+      🎬 ELLIE'S <span>MOVIE JOURNEY</span>
+      <span class="pixel-sub">★ INSERT MOVIE TO PLAY ★</span>
+    </div>
+    <div class="sync-status" id="syncStatus">CONNECTING...</div>
     <div class="header-actions">
-      <button class="btn-icon" onclick="openRandomPicker()">🎲 Pick a Movie</button>
-      <button class="btn-icon" onclick="toggleDarkMode()">🌙 Dark Mode</button>
-      <button class="btn-icon" onclick="exportData()">📤 Export</button>
-      <button class="btn-icon" onclick="triggerImport()">📥 Import</button>
+      <button class="btn-icon" onclick="openRandomPicker()">🎲 PICK</button>
+      <button class="btn-icon" onclick="toggleDarkMode()" id="darkBtn">🌙 MODE</button>
+      <button class="btn-icon" onclick="exportData()">📤 SAVE</button>
       <input type="file" id="importFile" accept=".json" style="display:none" onchange="importData(event)">
     </div>
   </div>
@@ -564,9 +679,9 @@ const DB_HEADERS = {
 function setSyncStatus(state) {
   const el = document.getElementById('syncStatus');
   if (!el) return;
-  if (state==='synced')  { el.textContent='☁️ Saved';       el.className='sync-status synced'; }
-  if (state==='syncing') { el.textContent='⏳ Saving...';    el.className='sync-status syncing'; }
-  if (state==='error')   { el.textContent='⚠️ Offline';     el.className='sync-status error'; }
+  if (state==='synced')  { el.textContent='✔ SAVED';      el.className='sync-status synced'; }
+  if (state==='syncing') { el.textContent='◈ SAVING...';  el.className='sync-status syncing'; }
+  if (state==='error')   { el.textContent='✖ OFFLINE';    el.className='sync-status error'; }
 }
 
 async function dbGet(table) {
